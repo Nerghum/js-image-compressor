@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Compressor</title>
+</head>
+<body>
+    <h1>Image Compressor</h1>
+    <input type="file" accept="image/*" id="imageInput">
+    <br><br>
+    <span>Original Image</span>
+    <img style="max-width: 400px;" id="originalImage" src="#" alt="Original Image">
+ 
+    <span>Compressed Image</span>
+    <img style="max-width: 400px;" id="compressedImage" src="#" alt="Compressed Image">
+    <br><br>
+    <a id="downloadLink" style="display: none;" download="compressed_image.jpg">
+        <button>Download Compressed Image</button>
+    </a>
+    
+    <script>
+        document.getElementById("imageInput").addEventListener("change", function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const originalImage = document.getElementById("originalImage");
+                    originalImage.src = e.target.result;
+
+                    // Create a canvas to handle the image compression
+                    const canvas = document.createElement("canvas");
+                    const ctx = canvas.getContext("2d");
+
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = function () {
+                        // Set the canvas dimensions to the image dimensions
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+
+                        // Draw the image on the canvas
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                        // Compress the image (e.g., reduce quality to 0.7)
+                        const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.7);
+
+                        // Display the compressed image
+                        const compressedImage = document.getElementById("compressedImage");
+                        compressedImage.src = compressedDataUrl;
+
+                        // Show the download button and set the download link
+                        const downloadLink = document.getElementById("downloadLink");
+                        downloadLink.style.display = "block";
+                        downloadLink.href = compressedDataUrl;
+                    };
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+</html>
